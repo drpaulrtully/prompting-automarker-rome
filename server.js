@@ -73,63 +73,53 @@ function wordCount(text) {
 }
 
 /* ---------------- Task content (UPDATED) ---------------- */
-const QUESTION_TEXT =
-const QUESTION_TEXT =
-  "Scenario - you are travelling to the city of Rome in June and you will be staying at a hotel in the city centre. You are there for 1 week and you want AI to produce a 7-day itinerary for your visit.\n\n" +
+/* ---------------- Task content (UPDATED) ---------------- */
+const QUESTION_TEXT = [
+  "Scenario - you are travelling to the city of Rome in June and you will be staying at a hotel in the city centre. You are there for 1 week and you want AI to produce a 7-day itinerary for your visit.",
+  "",
+  "A weak prompt would be:",
+  "",
+  "What will I see when I visit Rome?",
+  "",
+  "Your task is to rephrase this into a stronger prompt using the 4-stage structure covered earlier:",
+  "",
+  "Role: Tell AI who you are, or what role you want it to adopt.",
+  "Task: What do you want AI to do?",
+  "Context: Who is AI creating the content for?",
+  "Format: How do you want the AI to present the information (structure, tone) - what specific information (constraints) are you requiring?",
+  "",
+  "Aim for 50–200 words."
+].join("\n");
 
-  "A weak prompt would be:\n\n" +
+const TEMPLATE_TEXT = ["Role:", "Task:", "Context:", "Format:"].join("\n");
 
-  "What will I see when I visit Rome?\n\n" +
+const MODEL_ANSWER = [
+  "You are a tour guide for the city of Rome (role).",
+  "Give me a 7 day itinerary that includes 3 days of sightseeing Rome’s main historical attractions, one full-day visit outside of Rome, and three days of walking/ shopping (task)",
+  "I am travelling to Rome for the first time as a visitor and I will be staying there in the city centre for 1 week in June. (Context)",
+  "Give me bullets for each suggestion, the distance from my hotel at [X] street, any entrance fees or costs, relevant tour operator, and how long I should allow for the visit. Ensure that if I am sightseeing in the morning, I’m doing something different in the afternoon, so that each day contains a mix of activities. (Format)"
+].join("\n");
 
-  "Your task is to rephrase this into a stronger prompt using the 4-stage structure covered earlier:\n\n" +
+const LEARN_MORE_TEXT = [
+  "Here is a second example of using the 4-stage structure to improve your AI prompt:",
+  "",
+  "Scenario: You’ve just had a team meeting to discuss next year's budget and there are actions for the next two weeks. You want AI to help summarise the notes.",
+  "",
+  "Weak prompt:",
+  "",
+  "Summarise these notes.",
+  "",
+  "Strong prompt:",
+  "",
+  "You are a team leader. Summarise these meeting notes into 5 clear bullet points for colleagues who missed the budget meeting. Focus on key decisions and actions for the next two weeks. Use a professional tone.",
+  "",
+  "• Role: You are a team leader",
+  "• Task: Summarise meeting notes and share key decisions and actions",
+  "• Context: Colleagues who missed the meeting",
+  "• Format: 5 bullet points, professional tone."
+].join("\n");
 
-  "Role: Tell AI who you are, or what role you want it to adopt.\n" +
-  "Task: What do you want AI to do?\n" +
-  "Context: Who is AI creating the content for?\n" +
-  "Format: How do you want the AI to present the information (structure, tone) - what specific information (constraints) are you requiring?\n\n" +
-
-  "Aim for 50–200 words.";
-
-const TEMPLATE_TEXT =
-`Role:
-Task:
-Context:
-Format:`;
-
-// (Kept hidden until >=50 words by existing rules)
-const MODEL_ANSWER =
-`You are a tour guide for the city of Rome (role).
-Give me a 7 day itinerary that includes 3 days of sightseeing Rome’s main historical attractions, one full-day visit outside of Rome, and three days of walking/ shopping (task)
-I am travelling to Rome for the first time as a visitor and I will be staying there in the city centre for 1 week in June. (Context)
-Give me bullets for each suggestion, the distance from my hotel at [X] street, any entrance fees or costs, relevant tour operator, and how long I should allow for the visit. Ensure that if I am sightseeing in the morning, I’m doing something different in the afternoon, so that each day contains a mix of activities. (Format)`;
-
-/* ---------------- Framework text for the Learn More tabs ----------------
-   NOTE: leaving your existing framework tabs untouched for now (GDPR/UNESCO/Ofsted/Jisc),
-   because you asked for only the scenario spacing tweak in this step.
------------------------------------------------------------------------ */
-const FRAMEWORK = {
-  gdpr: {
-    expectation: "UK GDPR Article 5 – Lawfulness, fairness and transparency (data protection principles).",
-    case: "Use transparent, lawful handling of data when using AI tools, and be clear about inputs/outputs."
-  },
-  unesco: {
-    expectation: "UNESCO Recommendation on the Ethics of Artificial Intelligence (adopted 2021) – human rights, dignity, transparency and fairness across the AI lifecycle.",
-    case: "Prompting should support transparency, accountability and fairness in outputs."
-  },
-  ofsted: {
-    expectation: "Ofsted – responsible use of technology/AI: ethical, safe, transparent practice and management of risks.",
-    case: "Use AI responsibly and be clear about how you used it and checked outputs."
-  },
-  jisc: {
-    expectation: "Jisc – principles for responsible AI use: fair, safe, accountable and transparent deployment.",
-    case: "Be clear, specific, and reflective about how AI supports decisions and work."
-  }
-};
-
-/* ---------------- Deterministic marker ----------------
-   - <50 words: ONLY "Please add..." message; NO strengths/tags/grid/framework/model
-   - >=50 words: score + strengths + tags + grid + Learn more content + model answer
------------------------------------------------------------------------ */
+/* ---------------- Deterministic marker ---------------- */
 function markPromptingResponse(answerText) {
   const wc = wordCount(answerText);
 
@@ -143,23 +133,20 @@ function markPromptingResponse(answerText) {
         "This response is too short to demonstrate the full prompt structure.\n" +
         "Aim for at least 50 words and include: role, task, context, and format.",
       score: null,
-      feedback: null,
       strengths: null,
       tags: null,
       grid: null,
-      framework: null,
+      learnMoreText: null,
       modelAnswer: null
     };
   }
 
-  const text = String(answerText || "");
-  const t = text.toLowerCase();
+  const t = String(answerText || "").toLowerCase();
 
-  // Simple detection for the 4-stage structure
   const hasRole = /(role:|you are a|act as|as a )/.test(t);
   const hasTask = /(task:|give me|create|produce|generate|write|build|plan)/.test(t);
-  const hasContext = /(context:|i am|we are|for me|for a|audience|visitor|first time)/.test(t);
-  const hasFormat = /(format:|bullet|table|include|ensure|constraints|tone|structure|distance|fees|costs)/.test(t);
+  const hasContext = /(context:|i am|we are|for me|for a|audience|visitor|first time|rome|june|hotel)/.test(t);
+  const hasFormat = /(format:|bullet|table|include|ensure|constraints|tone|structure|distance|fees|costs|how long)/.test(t);
 
   const presentCount = [hasRole, hasTask, hasContext, hasFormat].filter(Boolean).length;
 
@@ -167,7 +154,6 @@ function markPromptingResponse(answerText) {
   if (presentCount === 4) rubricMsg = "Excellent – you’ve followed the prompt formula.";
   else if (presentCount >= 2) rubricMsg = "Good – try adding audience or tone to strengthen further.";
 
-  // Score out of 10 aligned to presence
   const score = presentCount === 4 ? 10 : presentCount === 3 ? 8 : presentCount === 2 ? 6 : 4;
 
   const strengths = [];
@@ -199,7 +185,7 @@ function markPromptingResponse(answerText) {
     strengths: strengths.slice(0, 3),
     tags,
     grid,
-    framework: FRAMEWORK,
+    learnMoreText: LEARN_MORE_TEXT,
     modelAnswer: MODEL_ANSWER
   };
 }
@@ -220,7 +206,7 @@ app.get("/api/config", (req, res) => {
 });
 
 // Check access code and set session cookie
-app.post("/api/unlock", (req, res) => {
+app.post("/api/check", (req, res) => {
   const code = clampStr(req.body?.code || "", 80).trim();
   if (!code || code !== ACCESS_CODE) {
     return res.status(401).json({ ok: false, error: "invalid_code" });
