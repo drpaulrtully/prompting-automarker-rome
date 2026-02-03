@@ -50,6 +50,8 @@ const gStructure = document.getElementById("gStructure");
 const learnMoreWrap = document.getElementById("learnMoreWrap");
 const learnMoreBtn = document.getElementById("learnMoreBtn");
 const frameworkPanel = document.getElementById("frameworkPanel");
+const learnMoreText = document.getElementById("learnMoreText"); // ✅ ADDED
+
 // Model answer
 const modelWrap = document.getElementById("modelWrap");
 const modelAnswerEl = document.getElementById("modelAnswer");
@@ -97,6 +99,7 @@ function resetExtras() {
   frameworkPanel.style.display = "none";
   frameworkPanel.setAttribute("aria-hidden", "true");
   learnMoreBtn.setAttribute("aria-expanded", "false");
+  if (learnMoreText) learnMoreText.textContent = ""; // ✅ SAFE CLEAR
 
   // Model answer
   modelWrap.style.display = "none";
@@ -220,7 +223,6 @@ learnMoreBtn?.addEventListener("click", () => {
   }
 });
 
-
 /* ---------------- Render helpers ---------------- */
 function renderStrengths(strengths) {
   if (!Array.isArray(strengths) || strengths.length === 0) {
@@ -240,27 +242,47 @@ function tagBadge(name, status) {
 }
 
 function renderTags(tags) {
-  // tags: [{name, status}] where status is ok/mid/bad
+  // tags: supports [{name, status}] OR [{label, status}]
   if (!Array.isArray(tags) || tags.length === 0) {
     tagsWrap.style.display = "none";
     tagsRow.innerHTML = "";
     return;
   }
-  tagsRow.innerHTML = tags.map(t => tagBadge(t.name, t.status)).join("");
+  tagsRow.innerHTML = tags.map(t => tagBadge(t.name || t.label || "", t.status)).join(""); // ✅ UPDATED
   tagsWrap.style.display = "block";
 }
 
 function renderGrid(grid) {
-  // grid: {ethical, impact, legal, recs, structure} -> "Secure" / "Developing" / "Missing"
+  // Supports BOTH:
+  // 1) object grid: {ethical, impact, legal, recs, structure}
+  // 2) array grid:  [{label, status, detail}, ...]
   if (!grid) {
     gridWrap.style.display = "none";
     return;
   }
-  gEthical.textContent = grid.ethical || "—";
-  gImpact.textContent = grid.impact || "—";
-  gLegal.textContent = grid.legal || "—";
-  gRecs.textContent = grid.recs || "—";
-  gStructure.textContent = grid.structure || "—";
+
+  // Case 1: object-style grid
+  if (!Array.isArray(grid)) {
+    gEthical.textContent = grid.ethical || "—";
+    gImpact.textContent = grid.impact || "—";
+    gLegal.textContent = grid.legal || "—";
+    gRecs.textContent = grid.recs || "—";
+    gStructure.textContent = grid.structure || "—";
+    gridWrap.style.display = "block";
+    return;
+  }
+
+  // Case 2: array-style grid from server.js (Role/Task/Context/Format)
+  const getStatus = (label) => {
+    const row = grid.find(r => (r.label || "").toLowerCase() === label.toLowerCase());
+    return row ? (row.status || "—") : "—";
+  };
+
+  gEthical.textContent = getStatus("Role");
+  gImpact.textContent = getStatus("Task");
+  gLegal.textContent = getStatus("Context");
+  gRecs.textContent = getStatus("Format");
+  gStructure.textContent = "—";
   gridWrap.style.display = "block";
 }
 
@@ -271,7 +293,7 @@ function renderFramework(frameworkText) {
     return;
   }
 
-  learnMoreText.textContent = frameworkText;
+  if (learnMoreText) learnMoreText.textContent = frameworkText; // ✅ SAFE SET
 
   // show container (panel still collapsed until button clicked)
   learnMoreWrap.style.display = "block";
@@ -345,10 +367,11 @@ async function mark() {
     renderTags(result.tags);
     renderGrid(result.grid);
 
-    feedbackBox.textContent = result.feedback || "";
+    // ✅ UPDATED: show message if feedback is not provided by server
+    feedbackBox.textContent = result.feedback || result.message || "";
 
-    // Learn more panel only if server provides framework content
-    renderFramework(result.framework);
+    // ✅ UPDATED: accept either server key
+    renderFramework(result.framework || result.learnMoreText);
 
     // Model answer only if server returns it (already respects >=20 words rule)
     if (result.modelAnswer) {
