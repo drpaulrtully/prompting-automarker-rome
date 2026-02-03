@@ -88,7 +88,7 @@ const QUESTION_TEXT = [
   "Context: Who is AI creating the content for?",
   "Format: How do you want the AI to present the information (structure, tone) - what specific information (constraints) are you requiring?",
   "",
-  "Aim for 50–200 words."
+  "Aim for 50–100 words."
 ].join("\n");
 
 const TEMPLATE_TEXT = ["Role:", "Task:", "Context:", "Format:"].join("\n");
