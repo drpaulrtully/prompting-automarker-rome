@@ -88,7 +88,7 @@ const QUESTION_TEXT = [
   "Context: Who is AI creating the content for?",
   "Format: How do you want the AI to present the information (structure, tone) - what specific information (constraints) are you requiring?",
   "",
-  "Aim for 50–100 words."
+  "Aim for 20+ words."
 ].join("\n");
 
 const TEMPLATE_TEXT = ["Role:", "Task:", "Context:", "Format:"].join("\n");
@@ -123,7 +123,7 @@ const LEARN_MORE_TEXT = [
 function markPromptingResponse(answerText) {
   const wc = wordCount(answerText);
 
-  // HARD GATE: under 50 words — no rubric, no model answer, no extras
+  // HARD GATE: under 20 words — no rubric, no model answer, no extras
   if (wc < 20) {
     return {
       gated: true,
@@ -131,7 +131,7 @@ function markPromptingResponse(answerText) {
       message:
         "Please add to your answer.\n" +
         "This response is too short to demonstrate the full prompt structure.\n" +
-        "Aim for at least 50 words and include: role, task, context, and format.",
+        "Aim for at least 20 words and include: role, task, context, and format.",
       score: null,
       strengths: null,
       tags: null,
