@@ -20,7 +20,7 @@ const COURSE_BACK_URL = process.env.COURSE_BACK_URL || process.env.BACK_URL || "
 const NEXT_LESSON_URL = process.env.NEXT_LESSON_URL || "";
 
 app.use(cookieParser(COOKIE_SECRET));
-.get
+
 /* ---------------- Session cookie helpers ---------------- */
 const COOKIE_NAME = "fethink_prompting_session";
 
@@ -219,7 +219,7 @@ app.post("/api/unlock", (req, res) => {
 
 // Marking endpoint (requires session)
 app.post("/api/mark", requireSession, (req, res) => {
-  const answerText = clampStr(req.body?.answer || "", 6000);
+  const answerText = clampStr(req.body?.answerText || req.body?.answer || "", 6000);
   const result = markPromptingResponse(answerText);
   res.json({ ok: true, result });
 });
