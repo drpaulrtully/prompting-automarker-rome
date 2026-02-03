@@ -272,6 +272,11 @@ button.full[aria-expanded="true"]::after{
   font-size: 13px;
 }
 
+/* Task text: preserve line breaks from server */
+#questionText{
+  white-space: pre-wrap;
+}
+
 /* Feedback */
 .feedbackCard{
   border:1px solid var(--border);
