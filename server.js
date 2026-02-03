@@ -124,7 +124,7 @@ function markPromptingResponse(answerText) {
   const wc = wordCount(answerText);
 
   // HARD GATE: under 50 words — no rubric, no model answer, no extras
-  if (wc < 50) {
+  if (wc < 20) {
     return {
       gated: true,
       wordCount: wc,
@@ -198,7 +198,7 @@ app.get("/api/config", (req, res) => {
     ok: true,
     questionText: QUESTION_TEXT,
     templateText: TEMPLATE_TEXT,
-    minWords: 50,
+    minWords: 20,
     maxWords: 200,
     courseBackUrl: COURSE_BACK_URL,
     nextLessonUrl: NEXT_LESSON_URL

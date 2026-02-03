@@ -2,11 +2,11 @@
    FEthink — AI Prompting Automarker (Level 1)
    - Access code gate -> signed httpOnly cookie session
    - Marking rules:
-       <50 words: "Please add..." only; no score; no extras; no model answer
-       >=50 words: score + strengths + tags + grid + improvement notes
+       <20 words: "Please add..." only; no score; no extras; no model answer
+       >=20 words: score + strengths + tags + grid + improvement notes
        + optional Learn more framework tabs (collapsed by default)
        + model answer (collapsed) shown only when server returns it
-   - Target length shown: 100–250 words
+   - Target length shown: 20-200 words
    ========================================================= */
 
 const gateEl = document.getElementById("gate");
@@ -56,7 +56,7 @@ const modelAnswerEl = document.getElementById("modelAnswer");
 
 /* ---------------- Local state ---------------- */
 let TEMPLATE_TEXT = "";
-let MIN_GATE = 50;
+let MIN_GATE = 20;
 
 /* ---------------- Helpers ---------------- */
 function wc(text) {
@@ -118,8 +118,8 @@ async function loadConfig() {
     if (!data?.ok) return;
 
     questionTextEl.textContent = data.questionText || "Task loaded.";
-    targetWordsEl.textContent = data.targetWords || "100–250";
-    MIN_GATE = data.minWordsGate ?? 50;
+    targetWordsEl.textContent = data.targetWords || "20-200";
+    MIN_GATE = data.minWordsGate ?? 20;
     minGateEl.textContent = String(MIN_GATE);
 
     TEMPLATE_TEXT = data.templateText || "";
@@ -297,7 +297,7 @@ async function mark() {
   const words = wc(answerText);
 
   if (words === 0) {
-    feedbackBox.textContent = "Write your answer first (aim for 100–250 words).";
+    feedbackBox.textContent = "Write your answer first (aim for 20-100 words).";
     return;
   }
 
@@ -330,14 +330,14 @@ async function mark() {
     wordCountBig.textContent = String(result.wordCount ?? words);
 
     if (result.gated) {
-      // Under 50 words: only show the "Please add..." message, no extras, no model answer.
+      // Under 20 words: only show the "Please add..." message, no extras, no model answer.
       scoreBig.textContent = "—";
       feedbackBox.textContent = result.message || "Please add to your answer.";
       resetExtras();
       return;
     }
 
-    // >= 50 words
+    // >= 20 words
     scoreBig.textContent = `${result.score}/10`;
 
     // strengths + tags + grid + notes
@@ -350,7 +350,7 @@ async function mark() {
     // Learn more panel only if server provides framework content
     renderFramework(result.framework);
 
-    // Model answer only if server returns it (already respects >=50 words rule)
+    // Model answer only if server returns it (already respects >=20 words rule)
     if (result.modelAnswer) {
       modelAnswerEl.textContent = result.modelAnswer;
       modelWrap.style.display = "block";
