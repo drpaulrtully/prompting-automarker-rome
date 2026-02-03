@@ -75,27 +75,27 @@ function hasAny(text, needles) {
 
 /* ---------------- Task content ---------------- */
 const QUESTION_TEXT =
-`Evaluate the SmartTown Council AI system.
+`Scenario - you are travelling to the city of Rome in June and you will be staying at a hotel in the city centre. You are there for 1 week and you want AI to produce a 7-day itinerary for your visit.
 
-In your response, explain:
-1) Two ethical or legal failures in how the AI system was designed or used
-2) Why these failures mattered for individuals or the public
-3) Two actions the council should have taken to use AI more responsibly
+A weak prompt would be:
+What will I see when I visit Rome?
 
-Aim for 100–250 words.`;
+Your task is to rephrase this into a stronger prompt using the 4-stage structure covered earlier:
+
+Role: Tell AI who you are, or what role you want it to adopt.
+Task: What do you want AI to do?
+Context: Who is AI creating the content for?
+Format: How do you want the AI to present the information (structure, tone) - what specific information (constraints) are you requiring?
+
+Aim for 50–200 words.
+`;
 
 const TEMPLATE_TEXT =
-`1) Key ethical or legal failures
-- Failure 1:
-- Failure 2:
-
-2) Why these failures mattered
-- Impact on individuals:
-- Impact on trust or fairness:
-
-3) What should have been done differently
-- Action 1:
-- Action 2:`;
+`Role:
+Task:
+Context:
+Format:
+`;
 
 const MODEL_ANSWER =
 `1. Key ethical or legal failures
@@ -290,7 +290,7 @@ app.get("/api/config", (_req, res) => {
     nextLessonUrl: NEXT_LESSON_URL,
     questionText: QUESTION_TEXT,
     templateText: TEMPLATE_TEXT,
-    targetWords: "100–250",
+    targetWords: "50–200",
     minWordsGate: 50
   });
 });
