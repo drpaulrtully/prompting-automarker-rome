@@ -223,7 +223,7 @@ app.get("/api/config", (req, res) => {
 });
 
 // Check access code and set session cookie
-app.post("/api/check", (req, res) => {
+app.post("/api/unlock", (req, res) => {
   const code = clampStr(req.body?.code || "", 80).trim();
   if (!code || code !== ACCESS_CODE) {
     return res.status(401).json({ ok: false, error: "invalid_code" });
