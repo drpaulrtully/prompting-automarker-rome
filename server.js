@@ -11,7 +11,7 @@ app.use(express.static("public"));
 /* ---------------- Env / defaults ---------------- */
 const ACCESS_CODE = process.env.ACCESS_CODE || "ROME-PROMPT-01";
 const COOKIE_SECRET = process.env.COOKIE_SECRET || crypto.randomBytes(32).toString("hex");
-const SESSION_MINUTES = parseInt(process.env.SESSION_MINUTES || "120", 10);
+const SESSION_MINUTES = parseInt(process.env.SESSION_MINUTES || "60", 10);
 
 // Support BOTH names to avoid breaking your Render setup:
 // - older template used COURSE_BACK_URL
@@ -20,7 +20,7 @@ const COURSE_BACK_URL = process.env.COURSE_BACK_URL || process.env.BACK_URL || "
 const NEXT_LESSON_URL = process.env.NEXT_LESSON_URL || "";
 
 app.use(cookieParser(COOKIE_SECRET));
-
+.get
 /* ---------------- Session cookie helpers ---------------- */
 const COOKIE_NAME = "fethink_prompting_session";
 
@@ -88,7 +88,7 @@ const QUESTION_TEXT = [
   "Context: Who is AI creating the content for?",
   "Format: How do you want the AI to present the information (structure, tone) - what specific information (constraints) are you requiring?",
   "",
-  "Aim for 20+ words."
+  "Aim for at least 20 words."
 ].join("\n");
 
 const TEMPLATE_TEXT = ["Role:", "Task:", "Context:", "Format:"].join("\n");
@@ -193,12 +193,14 @@ function markPromptingResponse(answerText) {
 /* ---------------- Routes ---------------- */
 
 // Config for the frontend
+// Config for the frontend
 app.get("/api/config", (req, res) => {
   res.json({
     ok: true,
     questionText: QUESTION_TEXT,
     templateText: TEMPLATE_TEXT,
-    minWords: 20,
+    targetWords: "20–200",
+    minWordsGate: 20,
     maxWords: 200,
     courseBackUrl: COURSE_BACK_URL,
     nextLessonUrl: NEXT_LESSON_URL

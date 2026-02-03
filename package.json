@@ -1,7 +1,7 @@
 {
-  "name": "ethics-automarker",
+  "name": "prompting-automarker",
   "version": "1.0.0",
-  "description": "FEthink automarker: AI ethics evaluative response (Payhip → Render) with simple access-code gate + cookie session",
+  "description": "FEthink automarker: AI prompting response (Payhip → Render) with simple access-code gate + cookie session",
   "main": "server.js",
   "type": "module",
   "scripts": {
