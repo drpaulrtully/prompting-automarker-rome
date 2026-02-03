@@ -74,24 +74,24 @@ function wordCount(text) {
 
 /* ---------------- Task content (UPDATED) ---------------- */
 const QUESTION_TEXT =
-`Scenario – you are travelling to the city of Rome in June and you will be staying at a hotel in the city centre. You are there for 1 week and you want AI to produce a 7-day itinerary for your visit.
+`Scenario – you are travelling to the city of Rome in June and you will be staying at a hotel in the city centre. You are there for 1 week and you want AI to produce a 7-day itinerary for your visit.\n\n" +
 
 
-A weak prompt would be:
+"A weak prompt would be:"
 
-What will I see when I visit Rome?
-
-
-Your task is to rephrase this into a stronger prompt using the 4-stage structure covered earlier:
+"What will I see when I visit Rome? \n\n" +
 
 
-Role: Tell AI who you are, or what role you want it to adopt.
+"Your task is to rephrase this into a stronger prompt using the 4-stage structure covered earlier:\n\n" +
+
+
+"Role: Tell AI who you are, or what role you want it to adopt.
 Task: What do you want AI to do?
 Context: Who is AI creating the content for?
-Format: How do you want the AI to present the information (structure, tone) - what specific information (constraints) are you requiring?
+Format: How do you want the AI to present the information (structure, tone) - what specific information (constraints) are you requiring?\n\n" +
 
 
-Aim for 50–200 words.`;
+"Aim for 50–100 words.`;
 
 const TEMPLATE_TEXT =
 `Role:
